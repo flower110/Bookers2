@@ -1,0 +1,46 @@
+<main>
+  <P id = "notice"></P>
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-12 col-md-8 col-lg-5 px-5 px-sm-0 mx-auto">
+        <h2>Editing Book</h2>
+
+         <div class="error text-danger ml-5">
+           <% if @book.errors.any? %>
+            <div class="error_title h2">
+              <%= pluralize(@book.errors.count, "error") %> prohibited this book from being saved:</br>
+            </div>
+            <ul>
+               <% @book.errors.full_messages.each do |message| %>
+                 <li><%= message %> </li>
+               <% end %>
+            </ul>
+           <% end %>
+         </div>
+
+        <%= form_with model:@book, local:true do |f| %>
+
+          <div class="form-group">
+            <label for="book_title">Title</label>
+            <div class="title_text" >
+              <%= f.text_field :title, size: 50 %>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for= "book_opinion">Opinion</label>
+            <div class="opinion_text">
+              <%= f.text_area :body, size: "53x2" %>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <%= f.submit "Update Book", class: "btn btn-success" %>
+          </div>
+        <% end %>
+
+        <P class ="button"><%= link_to 'Show', book_path(@book.id) %> | <%= link_to 'Back', books_path %></P>
+      </div>
+    </div>
+  </div>
+</main>

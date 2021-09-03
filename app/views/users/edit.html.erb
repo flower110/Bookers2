@@ -1,0 +1,49 @@
+<main>
+  <P id = "notice"></P>
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-12 col-md-8 col-lg-5 px-5 px-sm-0 mx-auto">
+        <h2>User info</h2>
+
+        <div class="error text-danger">
+          <% if @user.errors.any? %>
+           <div class="error_title h2">
+             <%= pluralize(@user.errors.count, "error") %> prohibited this book from being saved:</br>
+           </div>
+           <ul>
+             <% @user.errors.full_messages.each do |message| %>
+              <li><%= message %> </li>
+             <% end %>
+           </ul>
+          <% end %>
+        </div>
+
+        <%= form_with model:@user, local:true do |f| %>
+          <div class="form-group">
+            <label for="user_name">Name</label>
+            <div class="name_text">
+              <%= f.text_field :name, size: 50,  autofocus: true, id:"inputName", placeholder:"name" %>
+            </div>
+          </div>
+          <div class="form-group">
+            <%= attachment_image_tag @user, :profile_image, :fill, 60,60 %>
+            <label for= "user_image">Image</label>
+            <div class="image_button">
+              <%= f.attachment_field :profile_image, placeholder: "image" %>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for= "user_introduction">Introduction</label>
+            <div class="intro_text">
+              <%= f.text_area :introduction, size: "53x2", autofocus: true, id:"inputName", placeholder:"introduction" %>
+            </div>
+          </div>
+          <div class="form-group">
+            <%= f.submit "Update User", class: "btn btn-secondary" %>
+          </div>
+
+        <% end %>
+      </div>
+    </div>
+  </div>
+</main>
