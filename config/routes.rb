@@ -6,11 +6,17 @@ Rails.application.routes.draw do
 
   get 'home/about' => "homes#about"
   resources :users, only: [:index, :show, :edit, :update]
-  resources :books
+  resources :books do
+    resource :favorites, only: [:create, :destroy]
+    resources :book_comments, only: [:create, :destroy]
+  end
+
+
   post 'users' => "books#create"
   post 'books' => "books#create"
   post 'users/:id' => "books#create"
   post 'books/:id' => "books#create"
+  get 'books/:id/book_comments' => "books#show"
 
 
 end

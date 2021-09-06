@@ -6,7 +6,20 @@
 
         <%= render 'books/list', user: @user %>
 
-        <%= render 'form' %>
+        <h2 class="mt-3">New book</h2>
+        <%= form_with model: Book.new, local:true do |f| %>
+          <div class = "mb-3">
+            <label for="book_title">Title</label>
+            <div class="new_book_title"><%= f.text_field :title, size: "25"%></div>
+          </div>
+          <div class = "mb-3">
+            <label for="book_opinion">Opinion</label>
+            <div class="new_book_opinion"><%= f.text_area :body, size: "28x2" %></div>
+          </div>
+          <div class = "form_group">
+           <%= f.submit 'Create Book', class: 'btn btn-success' %>
+          </div>
+        <% end %>
 
       </div>
 
@@ -26,7 +39,31 @@
               　　<%= @book.title %>
                 <% end %>
               </td>
+
               <td><%= @book.body %></td>
+
+              <% if @book.favorited_by?(current_user) %>
+               <td>
+                 <p>
+                   <%= link_to book_favorites_path(@book), class: "text-danger", method: :delete do %>
+                     <i class="fas fa-heart"></i><%= @book.favorites.count %>
+                   <% end %>
+                 </p>
+               </td>
+               <% else %>
+               <td>
+                 <p>
+                   <%= link_to book_favorites_path(@book), method: :post do %>
+                     <i class="fas fa-heart"></i><%= @book.favorites.count %>
+                   <% end %>
+                 </p>
+               </td>
+              <% end %>
+
+              <td>
+                <p>コメント数:<%= @book.book_comments.count %></p>
+              </td>
+
               <% if @book.user_id == current_user.id %>
                 <td>
                    <%= link_to "Edit", edit_book_path(@book), class: 'btn btn-success' %>
@@ -38,6 +75,54 @@
             </tr>
           </tbody>
         </table>
+
+        <div class="comments">
+          <table>
+            <tbody>
+                <% @book.book_comments.each do |book_comment| %>
+                <tr>
+                <td>
+                  <%= attachment_image_tag book_comment.user, :profile_image, :fill, 40, 40, format:'jpeg', fallback: "no_image.jpg" %></br>
+                  <%= link_to user_path(book_comment.user.id) do %>
+                    <%= book_comment.user.name %>
+                  <% end %>
+                </td>
+                <td>
+                  <%= book_comment.comment %>
+                </td>
+                <% if book_comment.user == current_user %>
+                  <td>
+                   <div class="comment-delete">
+                     <%= link_to "Destroy", book_book_comment_path(book_comment.book, book_comment), method: :delete, class:'btn-sm btn-danger' %>
+                   </div>
+                  </td>
+                <% end %>
+                </tr>
+                <% end %>
+            </tbody>
+          </table>
+        </div>
+
+        <% if @error_comment.present? %>
+        <div class="comment-error text-danger ml-2">
+          <div class="comment-error_title h4">
+            <%= pluralize(@error_comment.errors.count, "error") %> prohibited this book from being saved:</br>
+          </div>
+          <ul>
+           <% @error_comment.errors.full_messages.each do |message| %>
+            <li><%= message %> </li>
+           <% end %>
+          </ul>
+        </div>
+        <% end %>
+
+        <div class="new-comment">
+          <%= form_with(model:[@book, @book_comment], local: true) do |f| %>
+            <%= f.text_area :comment, rows:'5',placeholder:"comment..", size: "100x4" %></br>
+            <%= f.submit"送信" %>
+          <% end %>
+        </div>
+
       </div>
 
     </div>
